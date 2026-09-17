@@ -10,7 +10,7 @@
     <div class="card">
       <p><%= task.description %></p>
       <% if (task.est_minutes) { %><p class="muted">⏱ זמן משוער: כ-<%= task.est_minutes %> דקות</p><% } %>
-      <% if (task.approval_conditions) { %><p class="muted">📋 תנאים לאישור: <%= task.approval_conditions %></p><% } %>
+      <% if (task.approval_conditions) { %><p class="muted">תנאים לאישור: <%= task.approval_conditions %></p><% } %>
       <% if (task.reference_link) { %>
         <a href="<%= task.reference_link %>" target="_blank" class="btn btn-secondary">פתח/י את הפוסט / האירוע</a>
       <% } %>

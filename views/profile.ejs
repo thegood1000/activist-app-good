@@ -4,6 +4,10 @@
 <body>
   <div class="container">
     <h1>הפרופיל שלי</h1>
+
+    <% if (typeof error !== 'undefined' && error) { %><div class="alert alert-error"><%= error %></div><% } %>
+    <% if (typeof success !== 'undefined' && success) { %><div class="alert alert-success"><%= success %></div><% } %>
+
     <div class="card">
       <div><strong><%= currentUser.full_name %></strong></div>
       <div class="muted"><%= currentUser.phone %></div>
@@ -15,9 +19,28 @@
         <label style="display:flex; align-items:center; justify-content:space-between;">
           <span>הסתר את שמי המלא בלוח המובילים</span>
           <button type="submit" class="btn btn-secondary" style="width:auto; margin:0; padding:8px 16px;">
-            <%= currentUser.hide_full_name ? 'מוסתר ✓' : 'הצג/הסתר' %>
+            <%= currentUser.hide_full_name ? 'מוסתר' : 'הצג/הסתר' %>
           </button>
         </label>
+      </form>
+    </div>
+
+    <div class="card">
+      <h3 class="mt-0">שינוי קוד אישי (PIN)</h3>
+      <form method="POST" action="/profile/change-pin">
+        <div class="field">
+          <label>קוד נוכחי</label>
+          <input type="password" inputmode="numeric" name="current_pin" required>
+        </div>
+        <div class="field">
+          <label>קוד חדש (לפחות 4 ספרות)</label>
+          <input type="password" inputmode="numeric" name="new_pin" minlength="4" required>
+        </div>
+        <div class="field">
+          <label>אימות קוד חדש</label>
+          <input type="password" inputmode="numeric" name="new_pin_confirm" minlength="4" required>
+        </div>
+        <button type="submit" class="btn btn-secondary">עדכון קוד</button>
       </form>
     </div>
 

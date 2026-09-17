@@ -24,7 +24,7 @@
         <% if (s.review_reason) { %><p class="muted"><%= s.review_reason %></p><% } %>
         <% if (s.status === 'rejected') { %>
           <% if (s.appeal_count > 0) { %>
-            <p class="muted">✅ נשלח ערעור על החלטה זו - ממתין לבדיקה חוזרת של מנהל.</p>
+            <p class="muted">נשלח ערעור על החלטה זו - ממתין לבדיקה חוזרת של מנהל.</p>
           <% } else { %>
             <form method="POST" action="/submissions/<%= s.id %>/appeal">
               <input type="text" name="message" placeholder="למה לדעתך זו טעות?" style="width:100%; padding:10px; border-radius:8px; border:1px solid #ccc; margin-bottom:8px;">

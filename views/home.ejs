@@ -4,13 +4,13 @@
 <body>
   <div class="container">
     <div class="top-bar">
-      <div class="brand"><div class="brand-mark">כ</div><%= appName %></div>
+      <div class="brand"><img src="/img/brand-mark.png" class="brand-mark" alt=""><%= appName %></div>
       <% if (['super_admin','division_head','reviewer'].includes(currentUser.role)) { %>
         <a href="/admin" class="points-badge">פאנל ניהול</a>
       <% } %>
     </div>
 
-    <h2 class="mt-0">שלום, <%= currentUser.full_name.split(' ')[0] %> 👋</h2>
+    <h2 class="mt-0">שלום, <%= currentUser.full_name.split(' ')[0] %></h2>
 
     <div class="card">
       <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -24,7 +24,7 @@
       <% if (level.next) { %>
         <div class="muted">עוד <%= level.pointsToNext %> נקודות לדרגת "<%= level.next %>"</div>
       <% } else { %>
-        <div class="muted">הגעת לדרגה הגבוהה ביותר! 🏅</div>
+        <div class="muted">הגעת לדרגה הגבוהה ביותר!</div>
       <% } %>
       <% if (division) { %><div class="muted" style="margin-top:8px;">האגף שלך: <%= division.name %></div><% } %>
     </div>
@@ -38,7 +38,6 @@
       </div>
     <% } else { %>
       <div class="card center">
-        <div class="big-emoji">✅</div>
         <p>אין כרגע משימות זמינות חדשות. חזור/י מאוחר יותר!</p>
       </div>
     <% } %>

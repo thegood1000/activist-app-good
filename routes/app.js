@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const crypto = require('crypto');
 const multer = require('multer');
+const bcrypt = require('bcryptjs');
 const db = require('../db');
 const { getLevel } = require('../lib/levels');
 const router = express.Router();
@@ -172,6 +173,27 @@ router.get('/leaderboard', (req, res) => {
 router.post('/profile/toggle-name', (req, res) => {
   db.prepare('UPDATE users SET hide_full_name = 1 - hide_full_name WHERE id = ?').run(req.user.id);
   res.redirect('/profile');
+});
+
+router.post('/profile/change-pin', (req, res) => {
+  const { current_pin, new_pin, new_pin_confirm } = req.body;
+  const user = db.prepare('SELECT * FROM users WHERE id = ?').get(req.user.id);
+
+  if (!current_pin || !bcrypt.compareSync(current_pin, user.pin_hash)) {
+    return res.render('profile', { error: 'הקוד הנוכחי שגוי.' });
+  }
+  if (!new_pin || new_pin.trim().length < 4) {
+    return res.render('profile', { error: 'הקוד החדש חייב להכיל לפחות 4 ספרות.' });
+  }
+  if (new_pin !== new_pin_confirm) {
+    return res.render('profile', { error: 'הקוד החדש ואימות הקוד לא זהים.' });
+  }
+
+  const newHash = bcrypt.hashSync(new_pin.trim(), 10);
+  db.prepare('UPDATE users SET pin_hash = ? WHERE id = ?').run(newHash, req.user.id);
+  db.prepare('INSERT INTO audit_log (actor_id, action, details) VALUES (?, ?, ?)')
+    .run(req.user.id, 'self_change_pin', null);
+  res.render('profile', { success: 'הקוד האישי עודכן בהצלחה.' });
 });
 
 router.get('/profile', (req, res) => {

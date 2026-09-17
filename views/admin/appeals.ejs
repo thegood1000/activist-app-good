@@ -5,7 +5,7 @@
   <div class="container">
     <%- include('../partials/admin_nav') %>
     <h1>ערעורים פתוחים</h1>
-    <% if (!appeals.length) { %><div class="card">אין כרגע ערעורים ממתינים 🎉</div><% } %>
+    <% if (!appeals.length) { %><div class="card">אין כרגע ערעורים ממתינים.</div><% } %>
     <% appeals.forEach(a => { %>
       <div class="card">
         <div style="display:flex; justify-content:space-between;">
