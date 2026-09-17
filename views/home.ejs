@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="he">
+<head><%- include('partials/head', { title: 'הבית' }) %></head>
+<body>
+  <div class="container">
+    <div class="top-bar">
+      <div class="brand"><div class="brand-mark">כ</div><%= appName %></div>
+      <% if (['super_admin','division_head','reviewer'].includes(currentUser.role)) { %>
+        <a href="/admin" class="points-badge">פאנל ניהול</a>
+      <% } %>
+    </div>
+
+    <h2 class="mt-0">שלום, <%= currentUser.full_name.split(' ')[0] %> 👋</h2>
+
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <div class="muted">הדרגה שלך</div>
+          <div style="font-size:22px; font-weight:800;"><%= level.name %></div>
+        </div>
+        <div class="points-badge"><%= currentUser.points_total %> נקודות</div>
+      </div>
+      <div class="progress-outer"><div class="progress-inner" style="width: <%= Math.round(level.progress*100) %>%;"></div></div>
+      <% if (level.next) { %>
+        <div class="muted">עוד <%= level.pointsToNext %> נקודות לדרגת "<%= level.next %>"</div>
+      <% } else { %>
+        <div class="muted">הגעת לדרגה הגבוהה ביותר! 🏅</div>
+      <% } %>
+      <% if (division) { %><div class="muted" style="margin-top:8px;">האגף שלך: <%= division.name %></div><% } %>
+    </div>
+
+    <% if (recommended) { %>
+      <div class="card">
+        <div class="muted">המשימה המומלצת הבאה</div>
+        <h3 style="margin:6px 0;"><%= recommended.title %></h3>
+        <div class="points-badge">+<%= recommended.points %> נקודות</div>
+        <a href="/tasks/<%= recommended.id %>" class="btn btn-primary">למשימה הבאה</a>
+      </div>
+    <% } else { %>
+      <div class="card center">
+        <div class="big-emoji">✅</div>
+        <p>אין כרגע משימות זמינות חדשות. חזור/י מאוחר יותר!</p>
+      </div>
+    <% } %>
+
+    <% if (moreTasks.length) { %>
+      <div class="card">
+        <div class="muted" style="margin-bottom:8px;">עוד משימות זמינות</div>
+        <% moreTasks.forEach(t => { %>
+          <a href="/tasks/<%= t.id %>" class="task-row">
+            <span><%= t.title %></span>
+            <span class="points-badge">+<%= t.points %></span>
+          </a>
+        <% }) %>
+      </div>
+    <% } %>
+  </div>
+  <%- include('partials/bottom_nav', { active: 'home' }) %>
+</body>
+</html>

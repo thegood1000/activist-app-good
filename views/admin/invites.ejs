@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="he">
+<head><%- include('../partials/head', { title: 'קודי הצטרפות' }) %></head>
+<body class="light-surface">
+  <div class="container">
+    <%- include('../partials/admin_nav') %>
+
+    <h1>אגפים</h1>
+    <div class="card">
+      <form method="POST" action="/admin/divisions/create" style="display:flex; gap:8px;">
+        <input type="text" name="name" placeholder="שם אגף חדש" required style="flex:1; padding:12px; border-radius:8px; border:1px solid #ccc;">
+        <button type="submit" class="btn btn-secondary" style="width:auto; margin:0;">הוספה</button>
+      </form>
+    </div>
+
+    <h1>יצירת קוד הצטרפות</h1>
+    <div class="card">
+      <form method="POST" action="/admin/invites/create">
+        <div class="field">
+          <label>קוד מותאם אישית (רשות - אחרת ייווצר אוטומטית)</label>
+          <input type="text" name="custom_code" placeholder="לדוגמה: TZAFON2026">
+        </div>
+        <div class="field">
+          <label>אגף</label>
+          <select name="division_id">
+            <option value="">ללא שיוך אוטומטי</option>
+            <% divisions.forEach(d => { %><option value="<%= d.id %>"><%= d.name %></option><% }) %>
+          </select>
+        </div>
+        <div class="field">
+          <label>תפקיד שיוענק</label>
+          <select name="role_to_grant">
+            <option value="activist">פעיל</option>
+            <option value="division_head">מנהל אגף</option>
+            <option value="reviewer">בודק אנושי</option>
+          </select>
+        </div>
+        <div class="field"><label>מספר שימושים מרבי (ריק = ללא הגבלה)</label><input type="number" name="max_uses"></div>
+        <div class="field"><label>תאריך תפוגה (רשות)</label><input type="date" name="expires_at"></div>
+        <button type="submit" class="btn btn-primary">יצירת קוד</button>
+      </form>
+    </div>
+
+    <h2>קודים קיימים</h2>
+    <table class="admin-table">
+      <tr><th>קוד</th><th>אגף</th><th>תפקיד</th><th>שימושים</th><th>סטטוס</th><th></th></tr>
+      <% invites.forEach(i => { %>
+        <tr>
+          <td><%= i.code %></td>
+          <td><%= i.division_name || 'ללא' %></td>
+          <td><%= i.role_to_grant %></td>
+          <td><%= i.uses_count %><%= i.max_uses ? ' / ' + i.max_uses : '' %></td>
+          <td><%= i.active ? 'פעיל' : 'כבוי' %></td>
+          <td><form method="POST" action="/admin/invites/<%= i.id %>/toggle"><button type="submit" class="btn btn-secondary" style="width:auto; margin:0; padding:6px 10px;"><%= i.active ? 'כיבוי' : 'הפעלה' %></button></form></td>
+        </tr>
+      <% }) %>
+    </table>
+  </div>
+</body>
+</html>

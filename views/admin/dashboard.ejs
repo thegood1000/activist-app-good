@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="he">
+<head><%- include('../partials/head', { title: 'פאנל ניהול' }) %></head>
+<body class="light-surface">
+  <div class="container">
+    <%- include('../partials/admin_nav') %>
+
+    <div style="display:flex; gap:10px; margin-bottom:16px;">
+      <div class="card" style="flex:1; text-align:center;"><div style="font-size:26px; font-weight:800;"><%= stats.pendingCount %></div><div class="muted">ממתינים לבדיקה</div></div>
+      <div class="card" style="flex:1; text-align:center;"><div style="font-size:26px; font-weight:800;"><%= stats.usersCount %></div><div class="muted">פעילים</div></div>
+      <div class="card" style="flex:1; text-align:center;"><div style="font-size:26px; font-weight:800;"><%= stats.approvedToday %></div><div class="muted">אושרו היום</div></div>
+    </div>
+
+    <h2>תור בדיקה ידנית</h2>
+    <% if (!pending.length) { %><div class="card">אין כרגע בקשות ממתינות 🎉</div><% } %>
+    <% pending.forEach(s => { %>
+      <div class="card">
+        <div style="display:flex; justify-content:space-between;">
+          <strong><%= s.full_name %></strong>
+          <span class="points-badge">+<%= s.points %></span>
+        </div>
+        <div class="muted"><%= s.title %></div>
+        <% if (s.proof_path) { %><img src="<%= s.proof_path %>" class="proof-preview" alt="הוכחה"><% } %>
+        <form method="POST" action="/admin/submissions/<%= s.id %>/decide">
+          <div class="field">
+            <label>סיבה (חובה)</label>
+            <input type="text" name="reason" required placeholder="לדוגמה: התמונה תואמת את המשימה">
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button type="submit" name="decision" value="approve" class="btn btn-primary" style="margin:0;">אישור</button>
+            <button type="submit" name="decision" value="needs_info" class="btn btn-secondary" style="margin:0;">בקשת מידע נוסף</button>
+            <button type="submit" name="decision" value="reject" class="btn btn-danger" style="margin:0;">דחייה</button>
+          </div>
+        </form>
+      </div>
+    <% }) %>
+  </div>
+</body>
+</html>

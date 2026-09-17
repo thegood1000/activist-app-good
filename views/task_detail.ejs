@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="he">
+<head><%- include('partials/head', { title: task.title }) %></head>
+<body>
+  <div class="container">
+    <a href="/tasks" class="muted">→ חזרה לרשימת המשימות</a>
+    <h1><%= task.title %></h1>
+    <div class="points-badge">+<%= task.points %> נקודות</div>
+
+    <div class="card">
+      <p><%= task.description %></p>
+      <% if (task.est_minutes) { %><p class="muted">⏱ זמן משוער: כ-<%= task.est_minutes %> דקות</p><% } %>
+      <% if (task.approval_conditions) { %><p class="muted">📋 תנאים לאישור: <%= task.approval_conditions %></p><% } %>
+      <% if (task.reference_link) { %>
+        <a href="<%= task.reference_link %>" target="_blank" class="btn btn-secondary">פתח/י את הפוסט / האירוע</a>
+      <% } %>
+    </div>
+
+    <% if (typeof error !== 'undefined' && error) { %><div class="alert alert-error"><%= error %></div><% } %>
+
+    <% if (lastSubmission) { %>
+      <div class="card">
+        <div class="muted">הסטטוס האחרון שלך למשימה זו:</div>
+        <span class="chip chip-<%= lastSubmission.status === 'approved' ? 'approved' : lastSubmission.status === 'rejected' ? 'rejected' : 'pending' %>">
+          <%= lastSubmission.status === 'pending' ? 'ממתין לבדיקה' : lastSubmission.status === 'approved' ? 'אושר' : lastSubmission.status === 'rejected' ? 'נדחה' : 'נדרש מידע נוסף' %>
+        </span>
+        <% if (lastSubmission.review_reason) { %><p class="muted"><%= lastSubmission.review_reason %></p><% } %>
+      </div>
+    <% } %>
+
+    <% if (canSubmit) { %>
+      <form method="POST" action="/tasks/<%= task.id %>/submit" enctype="multipart/form-data">
+        <div class="card">
+          <h3 class="mt-0">סיימתי - העלאת הוכחה</h3>
+          <% if (task.proof_type !== 'none') { %>
+            <div class="field">
+              <label>צילום מסך / תמונה</label>
+              <input type="file" name="proof" accept="image/*" capture="environment" required>
+            </div>
+          <% } %>
+          <button type="submit" class="btn btn-primary">שליחה לבדיקה</button>
+        </div>
+      </form>
+    <% } %>
+  </div>
+  <%- include('partials/bottom_nav', { active: 'tasks' }) %>
+</body>
+</html>

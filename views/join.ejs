@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="he">
+<head><%- include('partials/head', { title: 'הצטרפות' }) %></head>
+<body>
+  <div class="container">
+    <div class="brand"><div class="brand-mark">כ</div><%= appName %></div>
+    <h1>הצטרפות למערכת</h1>
+
+    <% if (error) { %><div class="alert alert-error"><%= error %></div><% } %>
+
+    <% if (step === 'code') { %>
+      <p class="muted">הזן/י את קוד ההזמנה שקיבלת ממנהל האגף.</p>
+      <form method="POST" action="/join/check-code">
+        <div class="field">
+          <label for="code">קוד הזמנה</label>
+          <input type="text" name="code" id="code" required autofocus placeholder="לדוגמה: AB12CD34" style="text-transform:uppercase;">
+        </div>
+        <button type="submit" class="btn btn-primary">המשך</button>
+      </form>
+    <% } else { %>
+      <p class="muted">כמעט סיימנו. עוד כמה פרטים קצרים.</p>
+      <form method="POST" action="/join/register">
+        <input type="hidden" name="code" value="<%= code %>">
+        <div class="field">
+          <label for="full_name">שם מלא</label>
+          <input type="text" name="full_name" id="full_name" required autofocus>
+        </div>
+        <div class="field">
+          <label for="phone">מספר טלפון</label>
+          <input type="tel" name="phone" id="phone" required inputmode="numeric" placeholder="05XXXXXXXX">
+        </div>
+        <div class="field">
+          <label for="pin">בחר/י קוד אישי בן 4 ספרות (לזכור לכניסה הבאה)</label>
+          <input type="password" name="pin" id="pin" required inputmode="numeric" minlength="4" maxlength="6">
+        </div>
+        <button type="submit" class="btn btn-primary">הצטרפות</button>
+      </form>
+    <% } %>
+  </div>
+</body>
+</html>

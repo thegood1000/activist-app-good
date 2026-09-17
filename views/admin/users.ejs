@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="he">
+<head><%- include('../partials/head', { title: 'משתמשים' }) %></head>
+<body class="light-surface">
+  <div class="container">
+    <%- include('../partials/admin_nav') %>
+    <h1>משתמשים</h1>
+    <table class="admin-table">
+      <tr><th>שם</th><th>טלפון</th><th>אגף</th><th>תפקיד</th><th>נקודות</th><th>סטטוס</th><th></th></tr>
+      <% users.forEach(u => { %>
+        <tr>
+          <td><%= u.full_name %></td>
+          <td><%= u.phone %></td>
+          <td><%= u.division_name || '-' %></td>
+          <td><%= u.role %></td>
+          <td><%= u.points_total %></td>
+          <td><%= u.is_frozen ? 'מוקפא' : 'פעיל' %></td>
+          <td>
+            <form method="POST" action="/admin/users/<%= u.id %>/freeze">
+              <button type="submit" class="btn btn-secondary" style="width:auto; margin:0; padding:6px 10px;"><%= u.is_frozen ? 'הפשרה' : 'הקפאה' %></button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    </table>
+  </div>
+</body>
+</html>

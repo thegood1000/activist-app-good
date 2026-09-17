@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="he">
+<head><%- include('partials/head', { title: 'ההיסטוריה שלי' }) %></head>
+<body>
+  <div class="container">
+    <h1>היסטוריית משימות וניקוד</h1>
+
+    <h3>המשימות שלי</h3>
+    <% if (!submissions.length) { %><p class="muted">עדיין לא שלחת משימות.</p><% } %>
+    <% submissions.forEach(s => { %>
+      <div class="card">
+        <div style="display:flex; justify-content:space-between;">
+          <strong><%= s.title %></strong>
+          <span class="chip chip-<%= s.status === 'approved' ? 'approved' : s.status === 'rejected' ? 'rejected' : 'pending' %>">
+            <%= s.status === 'pending' ? 'ממתין' : s.status === 'approved' ? 'אושר +' + s.points_awarded : s.status === 'rejected' ? 'נדחה' : 'נדרש מידע' %>
+          </span>
+        </div>
+        <% if (s.review_reason) { %><p class="muted"><%= s.review_reason %></p><% } %>
+        <% if (s.status === 'rejected') { %>
+          <form method="POST" action="/submissions/<%= s.id %>/appeal">
+            <input type="text" name="message" placeholder="למה לדעתך זו טעות?" style="width:100%; padding:10px; border-radius:8px; border:1px solid #ccc; margin-bottom:8px;">
+            <button type="submit" class="btn btn-secondary">ערעור על ההחלטה</button>
+          </form>
+        <% } %>
+      </div>
+    <% }) %>
+
+    <h3>היסטוריית ניקוד</h3>
+    <% ledger.forEach(l => { %>
+      <div class="task-row">
+        <span><%= l.reason %></span>
+        <span class="points-badge" style="<%= l.delta < 0 ? 'color:#FF9598;' : '' %>"><%= l.delta > 0 ? '+' : '' %><%= l.delta %></span>
+      </div>
+    <% }) %>
+  </div>
+  <%- include('partials/bottom_nav', { active: 'profile' }) %>
+</body>
+</html>

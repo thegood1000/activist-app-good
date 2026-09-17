@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="he">
+<head><%- include('partials/head', { title: 'כניסה' }) %></head>
+<body>
+  <div class="container">
+    <div class="brand"><div class="brand-mark">כ</div><%= appName %></div>
+    <h1>כניסה</h1>
+    <% if (error) { %><div class="alert alert-error"><%= error %></div><% } %>
+    <form method="POST" action="/login">
+      <div class="field">
+        <label for="phone">מספר טלפון</label>
+        <input type="tel" name="phone" id="phone" required autofocus inputmode="numeric" placeholder="05XXXXXXXX">
+      </div>
+      <div class="field">
+        <label for="pin">קוד אישי</label>
+        <input type="password" name="pin" id="pin" required inputmode="numeric">
+      </div>
+      <button type="submit" class="btn btn-primary">כניסה</button>
+    </form>
+    <a href="/join" class="btn btn-secondary">אין לי חשבון - הצטרפות עם קוד</a>
+  </div>
+</body>
+</html>

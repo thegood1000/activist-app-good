@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="he">
+<head><%- include('partials/head', { title: 'הפרופיל שלי' }) %></head>
+<body>
+  <div class="container">
+    <h1>הפרופיל שלי</h1>
+    <div class="card">
+      <div><strong><%= currentUser.full_name %></strong></div>
+      <div class="muted"><%= currentUser.phone %></div>
+      <div class="points-badge" style="margin-top:8px;"><%= currentUser.points_total %> נקודות</div>
+    </div>
+
+    <div class="card">
+      <form method="POST" action="/profile/toggle-name">
+        <label style="display:flex; align-items:center; justify-content:space-between;">
+          <span>הסתר את שמי המלא בלוח המובילים</span>
+          <button type="submit" class="btn btn-secondary" style="width:auto; margin:0; padding:8px 16px;">
+            <%= currentUser.hide_full_name ? 'מוסתר ✓' : 'הצג/הסתר' %>
+          </button>
+        </label>
+      </form>
+    </div>
+
+    <a href="/history" class="btn btn-secondary">היסטוריית משימות וניקוד</a>
+    <form method="POST" action="/logout"><button type="submit" class="btn btn-danger">התנתקות</button></form>
+  </div>
+  <%- include('partials/bottom_nav', { active: 'profile' }) %>
+</body>
+</html>

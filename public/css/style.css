@@ -1,0 +1,221 @@
+/* מערכת עיצוב - "כן. סמוטריץ׳" - שלב 1
+   צבעים חולצו ישירות מהקריאייטיב הרשמי של הקמפיין שנשלח */
+:root {
+  --color-primary: #071730;      /* כחול נייבי כהה - רקע ראשי */
+  --color-primary-light: #0F2452; /* נייבי בהיר יותר - כרטיסים/משטחים */
+  --color-accent: #18C4F0;        /* טורקיז/ציאן - לוגו, כותרות, הדגשות */
+  --color-success: #37B44E;       /* ירוק - חלק מגרדיאנט הכפתור + הצלחה */
+  --color-warning: #F5A623;
+  --color-error: #E5484D;
+  --color-text-on-dark: #FFFFFF;
+  --color-text-muted: #A9BBD6;
+  --color-surface: #FFFFFF;
+  --color-surface-text: #0B1730;
+  --radius: 16px;
+  --font-main: 'Assistant', 'Heebo', system-ui, -apple-system, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  direction: rtl;
+  font-family: var(--font-main);
+  background: var(--color-primary);
+  color: var(--color-text-on-dark);
+  font-size: 18px;
+  line-height: 1.5;
+}
+
+body.light-surface {
+  background: #F4F6FB;
+  color: var(--color-surface-text);
+}
+
+a { color: inherit; }
+
+.container {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 20px 16px 100px;
+  min-height: 100vh;
+}
+
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 0 20px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  color: var(--color-accent);
+}
+
+.brand-mark {
+  width: 34px; height: 34px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--color-accent), var(--color-success));
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; color: var(--color-primary); font-size: 16px;
+}
+
+h1, h2, h3 { color: var(--color-text-on-dark); }
+body.light-surface h1, body.light-surface h2, body.light-surface h3 { color: var(--color-surface-text); }
+
+.card {
+  background: var(--color-primary-light);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+}
+
+body.light-surface .card {
+  background: var(--color-surface);
+  color: var(--color-surface-text);
+  box-shadow: 0 2px 12px rgba(11,23,48,0.08);
+}
+
+.btn {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 18px 20px;
+  border-radius: 14px;
+  font-size: 20px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  margin: 10px 0;
+  min-height: 56px;
+}
+
+.btn-primary {
+  background: linear-gradient(90deg, var(--color-success), var(--color-accent));
+  color: #06122A;
+}
+
+.btn-secondary {
+  background: transparent;
+  border: 2px solid var(--color-accent);
+  color: var(--color-accent);
+}
+
+body.light-surface .btn-secondary { color: #0B1730; border-color: #0B1730; }
+
+.btn-danger { background: var(--color-error); color: #fff; }
+.btn:active { transform: scale(0.98); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.field {
+  margin-bottom: 16px;
+}
+.field label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  font-size: 16px;
+}
+.field input, .field select, .field textarea {
+  width: 100%;
+  padding: 16px;
+  font-size: 18px;
+  border-radius: 12px;
+  border: 2px solid #2A3B5C;
+  background: #0B1730;
+  color: #fff;
+}
+body.light-surface .field input,
+body.light-surface .field select,
+body.light-surface .field textarea {
+  background: #fff;
+  color: #0B1730;
+  border-color: #D6DEEB;
+}
+
+.progress-outer {
+  background: rgba(255,255,255,0.15);
+  border-radius: 20px;
+  height: 16px;
+  overflow: hidden;
+  margin: 10px 0;
+}
+.progress-inner {
+  background: linear-gradient(90deg, var(--color-success), var(--color-accent));
+  height: 100%;
+  border-radius: 20px;
+}
+
+.points-badge {
+  display: inline-block;
+  background: rgba(24,196,240,0.15);
+  color: var(--color-accent);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.alert {
+  padding: 14px 16px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+.alert-error { background: rgba(229,72,77,0.15); color: #FF9598; border: 1px solid var(--color-error); }
+.alert-success { background: rgba(55,180,78,0.15); color: #8CE39B; border: 1px solid var(--color-success); }
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0; right: 0; left: 0;
+  background: var(--color-primary-light);
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 4px calc(10px + env(safe-area-inset-bottom));
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+}
+.bottom-nav a {
+  text-decoration: none;
+  color: var(--color-text-muted);
+  font-size: 13px;
+  text-align: center;
+  flex: 1;
+  padding: 6px 0;
+  font-weight: 600;
+}
+.bottom-nav a.active { color: var(--color-accent); }
+.nav-icon { display: block; font-size: 22px; margin-bottom: 2px; }
+
+.task-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  text-decoration: none;
+  color: inherit;
+}
+
+table.admin-table { width: 100%; border-collapse: collapse; font-size: 15px; }
+table.admin-table th, table.admin-table td {
+  padding: 10px 8px; text-align: right; border-bottom: 1px solid #E2E8F0;
+}
+.chip { display:inline-block; padding: 3px 10px; border-radius: 999px; font-size: 13px; font-weight: 700; }
+.chip-pending { background:#FFF3D6; color:#8A5A00; }
+.chip-approved { background:#DDF6E1; color:#177A2E; }
+.chip-rejected { background:#FBDADA; color:#A32323; }
+
+.muted { color: var(--color-text-muted); font-size: 14px; }
+body.light-surface .muted { color: #6B7A99; }
+
+.center { text-align: center; }
+.mt-0 { margin-top: 0; }
+.big-emoji { font-size: 48px; text-align: center; margin: 10px 0; }
+img.proof-preview { max-width: 100%; border-radius: 12px; margin: 10px 0; }

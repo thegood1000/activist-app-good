@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="he">
+<head><%- include('../partials/head', { title: 'ניהול משימות' }) %></head>
+<body class="light-surface">
+  <div class="container">
+    <%- include('../partials/admin_nav') %>
+    <h1>יצירת משימה חדשה</h1>
+    <div class="card">
+      <form method="POST" action="/admin/tasks/create">
+        <div class="field"><label>שם קצר</label><input type="text" name="title" required></div>
+        <div class="field"><label>הסבר ברור</label><textarea name="description" rows="3"></textarea></div>
+        <div class="field">
+          <label>סוג משימה</label>
+          <select name="task_type">
+            <option value="digital">שיתוף/לייק/תגובה דיגיטלית</option>
+            <option value="view">צפייה בתוכן</option>
+            <option value="event_register">הרשמה לאירוע</option>
+            <option value="event_attend">הגעה לאירוע</option>
+            <option value="field">פעילות שטח</option>
+            <option value="quiz">חידון ידע</option>
+            <option value="qr">סריקת QR באירוע</option>
+          </select>
+        </div>
+        <div class="field"><label>נקודות</label><input type="number" name="points" value="10" required></div>
+        <div class="field"><label>מספר פעמים מותר לביצוע</label><input type="number" name="max_completions_per_user" value="1"></div>
+        <div class="field">
+          <label>סוג הוכחה</label>
+          <select name="proof_type">
+            <option value="screenshot">צילום מסך / תמונה</option>
+            <option value="qr">סריקת QR (ללא תמונה)</option>
+            <option value="none">ללא הוכחה</option>
+          </select>
+        </div>
+        <div class="field"><label>זמן משוער (דקות)</label><input type="number" name="est_minutes"></div>
+        <div class="field"><label>תנאים לקבלת אישור</label><input type="text" name="approval_conditions"></div>
+        <div class="field"><label>קישור לפוסט / מיקום</label><input type="url" name="reference_link"></div>
+        <div class="field"><label>מגבלת משתתפים (רשות)</label><input type="number" name="participant_limit"></div>
+        <% if (typeof isSuperAdmin === 'undefined' || true) { %>
+        <div class="field">
+          <label>שיוך לאגף (ריק = כלל הפעילים)</label>
+          <select name="division_id">
+            <option value="">כלל הפעילים</option>
+            <% divisions.forEach(d => { %><option value="<%= d.id %>"><%= d.name %></option><% }) %>
+          </select>
+        </div>
+        <% } %>
+        <button type="submit" class="btn btn-primary">יצירת משימה</button>
+      </form>
+    </div>
+
+    <h2>משימות קיימות</h2>
+    <% tasks.forEach(t => { %>
+      <div class="card">
+        <div style="display:flex; justify-content:space-between;">
+          <strong><%= t.title %></strong>
+          <span class="chip <%= t.active ? 'chip-approved' : 'chip-rejected' %>"><%= t.active ? 'פעילה' : 'כבויה' %></span>
+        </div>
+        <div class="muted">+<%= t.points %> נקודות · <%= t.task_type %></div>
+        <form method="POST" action="/admin/tasks/<%= t.id %>/toggle">
+          <button type="submit" class="btn btn-secondary" style="margin-top:8px;"><%= t.active ? 'כיבוי משימה' : 'הפעלת משימה' %></button>
+        </form>
+      </div>
+    <% }) %>
+  </div>
+</body>
+</html>

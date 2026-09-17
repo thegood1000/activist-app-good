@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="he">
+<head><%- include('partials/head', { title: 'לוח מובילים' }) %></head>
+<body>
+  <div class="container">
+    <h1>לוח מובילים</h1>
+
+    <h3>לפי אגפים</h3>
+    <div class="card">
+      <% divisions.forEach((d,i) => { %>
+        <div class="task-row">
+          <span><%= i+1 %>. <%= d.name %></span>
+          <span class="points-badge"><%= d.total %></span>
+        </div>
+      <% }) %>
+    </div>
+
+    <h3>פעילים מובילים</h3>
+    <div class="card">
+      <% individuals.forEach(u => { %>
+        <div class="task-row" style="<%= u.isMe ? 'font-weight:800; color: var(--color-accent);' : '' %>">
+          <span>#<%= u.rank %> <%= u.name %><%= u.isMe ? ' (זה אתה!)' : '' %></span>
+          <span class="points-badge"><%= u.points %></span>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+  <%- include('partials/bottom_nav', { active: 'leaderboard' }) %>
+</body>
+</html>

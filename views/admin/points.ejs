@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="he">
+<head><%- include('../partials/head', { title: 'ניהול ניקוד' }) %></head>
+<body class="light-surface">
+  <div class="container">
+    <%- include('../partials/admin_nav') %>
+    <h1>הוספה/הורדה של ניקוד</h1>
+    <div class="card">
+      <form method="POST" action="/admin/points/adjust">
+        <div class="field">
+          <label>פעיל</label>
+          <select name="user_id" required>
+            <% users.forEach(u => { %><option value="<%= u.id %>"><%= u.full_name %> (<%= u.points_total %>)</option><% }) %>
+          </select>
+        </div>
+        <div class="field">
+          <label>שינוי נקודות (חיובי או שלילי, למשל -20)</label>
+          <input type="number" name="delta" required>
+        </div>
+        <div class="field">
+          <label>סיבה (חובה)</label>
+          <input type="text" name="reason" required placeholder="לדוגמה: השתתפות באירוע שטח">
+        </div>
+        <button type="submit" class="btn btn-primary">עדכון ניקוד</button>
+      </form>
+    </div>
+
+    <h2>כל הפעילים</h2>
+    <table class="admin-table">
+      <tr><th>שם</th><th>נקודות</th><th>תפקיד</th></tr>
+      <% users.forEach(u => { %><tr><td><%= u.full_name %></td><td><%= u.points_total %></td><td><%= u.role %></td></tr><% }) %>
+    </table>
+  </div>
+</body>
+</html>

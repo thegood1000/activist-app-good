@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="he">
+<head><%- include('partials/head', { title: 'משימות' }) %></head>
+<body>
+  <div class="container">
+    <h1>משימות זמינות</h1>
+    <% if (!tasks.length) { %>
+      <div class="card center">אין כרגע משימות פעילות.</div>
+    <% } %>
+    <% tasks.forEach(t => { %>
+      <a href="/tasks/<%= t.id %>" class="card" style="display:block; text-decoration:none; color:inherit;">
+        <div style="display:flex; justify-content:space-between;">
+          <h3 style="margin:0;"><%= t.title %></h3>
+          <span class="points-badge">+<%= t.points %></span>
+        </div>
+        <p class="muted" style="margin:8px 0 0;"><%= t.description %></p>
+        <% if (t.doneCount >= t.max_completions_per_user) { %>
+          <div class="chip chip-approved" style="margin-top:8px;">כבר בוצע</div>
+        <% } %>
+      </a>
+    <% }) %>
+  </div>
+  <%- include('partials/bottom_nav', { active: 'tasks' }) %>
+</body>
+</html>

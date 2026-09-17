@@ -1,0 +1,20 @@
+{
+  "name": "activist-app",
+  "version": "0.1.0",
+  "description": "מערכת ניהול והנעת פעילים - כן. סמוטריץ' (שלב 1 - שלד)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "seed": "node scripts/seed.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "better-sqlite3": "^11.3.0",
+    "ejs": "^3.1.10",
+    "multer": "^2.0.0",
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.4.5",
+    "nanoid": "^3.3.7"
+  }
+}
