@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="he">
+<head><%- include('../partials/head', { title: 'ערעורים' }) %></head>
+<body class="light-surface">
+  <div class="container">
+    <%- include('../partials/admin_nav') %>
+    <h1>ערעורים פתוחים</h1>
+    <% if (!appeals.length) { %><div class="card">אין כרגע ערעורים ממתינים 🎉</div><% } %>
+    <% appeals.forEach(a => { %>
+      <div class="card">
+        <div style="display:flex; justify-content:space-between;">
+          <strong><%= a.full_name %></strong>
+          <span class="points-badge">+<%= a.points %></span>
+        </div>
+        <div class="muted"><%= a.title %></div>
+        <% if (a.proof_path) { %><img src="<%= a.proof_path %>" class="proof-preview" alt="הוכחה"><% } %>
+        <p class="muted">סטטוס נוכחי: <%= a.submission_status === 'rejected' ? 'נדחה' : a.submission_status %></p>
+        <% if (a.message) { %><p><strong>הסבר הפעיל/ה:</strong> <%= a.message %></p><% } %>
+        <form method="POST" action="/admin/appeals/<%= a.id %>/resolve">
+          <div class="field">
+            <label>הערה (רשות)</label>
+            <input type="text" name="note" placeholder="לדוגמה: בדקתי שוב את התמונה - צודק/ת">
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button type="submit" name="action" value="accept" class="btn btn-primary" style="margin:0;">קבלת הערעור - אישור המשימה</button>
+            <button type="submit" name="action" value="reject" class="btn btn-danger" style="margin:0;">דחיית הערעור</button>
+          </div>
+        </form>
+      </div>
+    <% }) %>
+  </div>
+</body>
+</html>

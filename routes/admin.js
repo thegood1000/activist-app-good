@@ -59,17 +59,16 @@ router.post('/admin/submissions/:id/decide', (req, res) => {
     return res.status(403).render('error', { title: 'אין הרשאה', message: 'אתה יכול לאשר רק פעילים מהאגף שלך.' });
   }
 
-  const { decision, reason } = req.body; // approve | reject | needs_info
-  if (!reason || !reason.trim()) {
-    return res.status(400).render('error', { title: 'חסרה סיבה', message: 'חובה לציין סיבה לכל החלטה.' });
-  }
+  const { decision } = req.body; // approve | reject | needs_info
+  const reason = (req.body.reason || '').trim();
+  const reasonLabel = reason || '(ללא סיבה מפורטת)';
 
   const now = new Date().toISOString();
   db.prepare(`
     UPDATE submissions SET status = ?, reviewer_id = ?, review_reason = ?, reviewed_at = ?
     WHERE id = ?
   `).run(decision === 'approve' ? 'approved' : decision === 'reject' ? 'rejected' : 'needs_info',
-    req.user.id, reason, now, submission.id);
+    req.user.id, reason || null, now, submission.id);
 
   if (decision === 'approve') {
     db.prepare('UPDATE submissions SET points_awarded = ? WHERE id = ?').run(submission.task_points, submission.id);
@@ -77,11 +76,77 @@ router.post('/admin/submissions/:id/decide', (req, res) => {
     db.prepare(`
       INSERT INTO points_ledger (user_id, delta, reason, related_submission_id, created_by)
       VALUES (?, ?, ?, ?, ?)
-    `).run(submission.user_id, submission.task_points, `אישור משימה: ${reason}`, submission.id, req.user.id);
+    `).run(submission.user_id, submission.task_points, `אישור משימה: ${reasonLabel}`, submission.id, req.user.id);
   }
 
-  logAudit(req.user.id, `submission_${decision}`, `submission #${submission.id}: ${reason}`);
+  logAudit(req.user.id, `submission_${decision}`, `submission #${submission.id}: ${reasonLabel}`);
   res.redirect('/admin');
+});
+
+// ---------- ערעורים ----------
+router.get('/admin/appeals', (req, res) => {
+  const scopeDivision = isSuperAdmin(req.user) ? null : req.user.division_id;
+  const appeals = scopeDivision
+    ? db.prepare(`
+        SELECT ap.*, s.task_id, s.proof_path, s.status AS submission_status,
+               t.title, t.points, u.full_name, u.division_id
+        FROM appeals ap
+        JOIN submissions s ON s.id = ap.submission_id
+        JOIN tasks t ON t.id = s.task_id
+        JOIN users u ON u.id = s.user_id
+        WHERE ap.status = 'open' AND u.division_id = ?
+        ORDER BY ap.created_at ASC
+      `).all(scopeDivision)
+    : db.prepare(`
+        SELECT ap.*, s.task_id, s.proof_path, s.status AS submission_status,
+               t.title, t.points, u.full_name, u.division_id
+        FROM appeals ap
+        JOIN submissions s ON s.id = ap.submission_id
+        JOIN tasks t ON t.id = s.task_id
+        JOIN users u ON u.id = s.user_id
+        WHERE ap.status = 'open'
+        ORDER BY ap.created_at ASC
+      `).all();
+  res.render('admin/appeals', { appeals, isSuperAdmin: isSuperAdmin(req.user) });
+});
+
+router.post('/admin/appeals/:id/resolve', (req, res) => {
+  const appeal = db.prepare(`
+    SELECT ap.*, s.id AS submission_id, s.task_id, s.user_id AS submission_user_id,
+           s.status AS submission_status, u.division_id
+    FROM appeals ap
+    JOIN submissions s ON s.id = ap.submission_id
+    JOIN users u ON u.id = s.user_id
+    WHERE ap.id = ?
+  `).get(req.params.id);
+  if (!appeal) return res.status(404).send('לא נמצא');
+  if (!isSuperAdmin(req.user) && appeal.division_id !== req.user.division_id) {
+    return res.status(403).render('error', { title: 'אין הרשאה', message: 'אתה יכול לטפל רק בערעורים מהאגף שלך.' });
+  }
+  if (appeal.status !== 'open') return res.redirect('/admin/appeals');
+
+  const action = req.body.action; // accept | reject
+  const resolutionNote = (req.body.note || '').trim();
+
+  if (action === 'accept' && appeal.submission_status === 'rejected') {
+    const task = db.prepare('SELECT points FROM tasks WHERE id = ?').get(appeal.task_id);
+    db.prepare(`
+      UPDATE submissions SET status = 'approved', points_awarded = ?, review_reason = ?, reviewed_at = datetime('now')
+      WHERE id = ?
+    `).run(task.points, `אושר בעקבות ערעור${resolutionNote ? ': ' + resolutionNote : ''}`, appeal.submission_id);
+    db.prepare('UPDATE users SET points_total = points_total + ? WHERE id = ?').run(task.points, appeal.submission_user_id);
+    db.prepare(`
+      INSERT INTO points_ledger (user_id, delta, reason, related_submission_id, created_by)
+      VALUES (?, ?, ?, ?, ?)
+    `).run(appeal.submission_user_id, task.points, `אישור בעקבות ערעור${resolutionNote ? ': ' + resolutionNote : ''}`,
+      appeal.submission_id, req.user.id);
+  }
+
+  db.prepare(`UPDATE appeals SET status = 'resolved', resolution_note = ?, resolved_by = ? WHERE id = ?`)
+    .run(resolutionNote, req.user.id, appeal.id);
+  logAudit(req.user.id, `appeal_${action === 'accept' ? 'accepted' : 'rejected'}`,
+    `appeal #${appeal.id} (submission #${appeal.submission_id}): ${resolutionNote}`);
+  res.redirect('/admin/appeals');
 });
 
 // ---------- ניקוד ידני ----------

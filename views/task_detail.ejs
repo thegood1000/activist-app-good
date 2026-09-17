@@ -32,11 +32,16 @@
       <form method="POST" action="/tasks/<%= task.id %>/submit" enctype="multipart/form-data">
         <div class="card">
           <h3 class="mt-0">סיימתי - העלאת הוכחה</h3>
-          <% if (task.proof_type !== 'none') { %>
+          <% if (task.proof_type === 'screenshot' || task.proof_type === 'camera') { %>
             <div class="field">
-              <label>צילום מסך / תמונה</label>
-              <input type="file" name="proof" accept="image/*" capture="environment" required>
+              <label><%= task.proof_type === 'camera' ? 'צילום עכשיו (מצלמה)' : 'צילום מסך / תמונה' %></label>
+              <input type="file" name="proof" accept="image/*" required
+                <% if (task.proof_type === 'camera') { %>capture="environment"<% } %>>
+              <% if (task.proof_type === 'screenshot') { %><p class="muted">אפשר לבחור תמונה מהגלריה או לצלם חדשה.</p><% } %>
             </div>
+          <% } %>
+          <% if (task.proof_type === 'qr') { %>
+            <p class="muted">משימה זו מאומתת בסריקת קוד באירוע - אין צורך להעלות תמונה.</p>
           <% } %>
           <button type="submit" class="btn btn-primary">שליחה לבדיקה</button>
         </div>

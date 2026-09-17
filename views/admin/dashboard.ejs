@@ -23,8 +23,8 @@
         <% if (s.proof_path) { %><img src="<%= s.proof_path %>" class="proof-preview" alt="הוכחה"><% } %>
         <form method="POST" action="/admin/submissions/<%= s.id %>/decide">
           <div class="field">
-            <label>סיבה (חובה)</label>
-            <input type="text" name="reason" required placeholder="לדוגמה: התמונה תואמת את המשימה">
+            <label>סיבה (רשות)</label>
+            <input type="text" name="reason" placeholder="לדוגמה: התמונה תואמת את המשימה">
           </div>
           <div style="display:flex; gap:8px;">
             <button type="submit" name="decision" value="approve" class="btn btn-primary" style="margin:0;">אישור</button>

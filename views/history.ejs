@@ -5,6 +5,12 @@
   <div class="container">
     <h1>היסטוריית משימות וניקוד</h1>
 
+    <% if (typeof appealFlash !== 'undefined' && appealFlash === 'sent') { %>
+      <div class="alert alert-success">הערעור נשלח בהצלחה - מנהל יבדוק אותו בהקדם.</div>
+    <% } else if (typeof appealFlash !== 'undefined' && appealFlash === 'exists') { %>
+      <div class="alert alert-error">כבר נשלח ערעור על החלטה הזו - אפשר לשלוח ערעור אחד בלבד לכל משימה.</div>
+    <% } %>
+
     <h3>המשימות שלי</h3>
     <% if (!submissions.length) { %><p class="muted">עדיין לא שלחת משימות.</p><% } %>
     <% submissions.forEach(s => { %>
@@ -17,10 +23,17 @@
         </div>
         <% if (s.review_reason) { %><p class="muted"><%= s.review_reason %></p><% } %>
         <% if (s.status === 'rejected') { %>
-          <form method="POST" action="/submissions/<%= s.id %>/appeal">
-            <input type="text" name="message" placeholder="למה לדעתך זו טעות?" style="width:100%; padding:10px; border-radius:8px; border:1px solid #ccc; margin-bottom:8px;">
-            <button type="submit" class="btn btn-secondary">ערעור על ההחלטה</button>
-          </form>
+          <% if (s.appeal_count > 0) { %>
+            <p class="muted">✅ נשלח ערעור על החלטה זו - ממתין לבדיקה חוזרת של מנהל.</p>
+          <% } else { %>
+            <form method="POST" action="/submissions/<%= s.id %>/appeal">
+              <input type="text" name="message" placeholder="למה לדעתך זו טעות?" style="width:100%; padding:10px; border-radius:8px; border:1px solid #ccc; margin-bottom:8px;">
+              <button type="submit" class="btn btn-secondary">ערעור על ההחלטה</button>
+            </form>
+          <% } %>
+        <% } %>
+        <% if (s.status === 'needs_info') { %>
+          <a href="/tasks/<%= s.task_id %>" class="btn btn-secondary">שליחת הוכחה נוספת</a>
         <% } %>
       </div>
     <% }) %>

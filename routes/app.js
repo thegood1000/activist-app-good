@@ -87,7 +87,7 @@ router.post('/tasks/:id/submit', upload.single('proof'), (req, res) => {
 
   let proofPath = null;
   let proofHash = null;
-  if (task.proof_type !== 'none') {
+  if (task.proof_type === 'screenshot' || task.proof_type === 'camera') {
     if (!req.file) {
       return res.render('task_detail', {
         task,
@@ -120,7 +120,9 @@ router.post('/tasks/:id/submit', upload.single('proof'), (req, res) => {
 
 router.get('/history', (req, res) => {
   const submissions = db.prepare(`
-    SELECT s.*, t.title, t.points FROM submissions s
+    SELECT s.*, t.title, t.points,
+      (SELECT COUNT(*) FROM appeals a WHERE a.submission_id = s.id) AS appeal_count
+    FROM submissions s
     JOIN tasks t ON t.id = s.task_id
     WHERE s.user_id = ?
     ORDER BY s.created_at DESC
@@ -128,16 +130,22 @@ router.get('/history', (req, res) => {
   const ledger = db.prepare(`
     SELECT * FROM points_ledger WHERE user_id = ? ORDER BY created_at DESC
   `).all(req.user.id);
-  res.render('history', { submissions, ledger });
+  res.render('history', { submissions, ledger, appealFlash: req.query.appeal });
 });
 
 router.post('/submissions/:id/appeal', (req, res) => {
   const submission = db.prepare('SELECT * FROM submissions WHERE id = ? AND user_id = ?')
     .get(req.params.id, req.user.id);
   if (!submission) return res.status(404).send('לא נמצא');
+
+  const existing = db.prepare('SELECT id FROM appeals WHERE submission_id = ?').get(submission.id);
+  if (existing) {
+    return res.redirect('/history?appeal=exists');
+  }
+
   db.prepare('INSERT INTO appeals (submission_id, user_id, message) VALUES (?, ?, ?)')
-    .run(submission.id, req.user.id, req.body.message || '');
-  res.redirect('/history');
+    .run(submission.id, req.user.id, (req.body.message || '').trim());
+  res.redirect('/history?appeal=sent');
 });
 
 router.get('/leaderboard', (req, res) => {
